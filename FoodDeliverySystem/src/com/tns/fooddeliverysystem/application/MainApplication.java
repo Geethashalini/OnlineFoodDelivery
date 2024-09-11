@@ -1,15 +1,25 @@
 package com.tns.fooddeliverysystem.application;
+
 import com.tns.fooddeliverysystem.entities.FoodItem;
-
-
+import com.tns.fooddeliverysystem.entities.Restaurant;
 import com.tns.fooddeliverysystem.services.AdminService;
 import com.tns.fooddeliverysystem.services.CustomerService;
-import java.util.Scanner;public class MainApplication {
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class MainApplication {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        Map<Integer, Restaurant> restaurants = new HashMap<>();
+        
         AdminService adminService = new AdminService();
-        CustomerService customerService = new CustomerService(adminService);
-
+        CustomerService customerService = new CustomerService(restaurants);
+        
+        // Set the orders in AdminService from CustomerService
+        adminService.setOrders(customerService.getOrders());
+        
         while (true) {
             System.out.println("1. Admin Menu");
             System.out.println("2. Customer Menu");
@@ -42,7 +52,9 @@ import java.util.Scanner;public class MainApplication {
             System.out.println("2. Add Food Item to Restaurant");
             System.out.println("3. View Restaurants and Menus");
             System.out.println("4. Add Delivery Person");
-            System.out.println("5. Exit Admin Menu");
+            System.out.println("5. Assign Delivery Person to Order");
+            System.out.println("6. View Orders");
+            System.out.println("7. Exit Admin Menu");
             System.out.print("Choose an option: ");
             int adminChoice = scanner.nextInt();
 
@@ -78,6 +90,16 @@ import java.util.Scanner;public class MainApplication {
                     adminService.addDeliveryPerson(deliveryPersonId, deliveryPersonName, contactNo);
                     break;
                 case 5:
+                    System.out.print("Enter Order ID: ");
+                    int orderId = scanner.nextInt();
+                    System.out.print("Enter Delivery Person ID: ");
+                    deliveryPersonId = scanner.nextInt();
+                    adminService.assignDeliveryPersonToOrder(orderId, deliveryPersonId);
+                    break;
+                case 6:
+                    adminService.viewOrders();
+                    break;
+                case 7:
                     return;
                 default:
                     System.out.println("Invalid option. Try again.");
@@ -92,7 +114,9 @@ import java.util.Scanner;public class MainApplication {
             System.out.println("2. Add Food to Cart");
             System.out.println("3. View Cart");
             System.out.println("4. Place Order");
-            System.out.println("5. Exit Customer Menu");
+            System.out.println("5. View Food Items");
+            System.out.println("6. View Orders");
+            System.out.println("7. Exit Customer Menu");
             System.out.print("Choose an option: ");
             int customerChoice = scanner.nextInt();
 
@@ -113,8 +137,7 @@ import java.util.Scanner;public class MainApplication {
                     int foodItemId = scanner.nextInt();
                     System.out.print("Enter Quantity: ");
                     int quantity = scanner.nextInt();
-                    // In a real application, the food item should be fetched from the admin's restaurant menu
-                    FoodItem foodItem = new FoodItem(foodItemId, "Sample Food", 100.0);
+                    FoodItem foodItem = new FoodItem(foodItemId, "Sample Food", 100.0);  // Placeholder food item
                     customerService.addToCart(customerId, foodItem, quantity);
                     break;
                 case 3:
@@ -128,6 +151,15 @@ import java.util.Scanner;public class MainApplication {
                     customerService.placeOrder(customerId);
                     break;
                 case 5:
+                    System.out.println("Displaying available food items:");
+                    customerService.viewAllFoodItems();
+                    break;
+                case 6:
+                    System.out.print("Enter Customer ID: ");
+                    customerId = scanner.nextInt();
+                    customerService.viewOrders(customerId);
+                    break;
+                case 7:
                     return;
                 default:
                     System.out.println("Invalid option. Try again.");

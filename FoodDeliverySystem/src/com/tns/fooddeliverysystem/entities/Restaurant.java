@@ -37,4 +37,14 @@ public class Restaurant {
         }
         return restaurantInfo.toString();
     }
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	
 }
